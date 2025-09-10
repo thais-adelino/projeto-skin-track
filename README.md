@@ -50,7 +50,7 @@ Uma aplicação mobile completa para análise de tipo de pele com interface mode
 
 Antes de começar, certifique-se de ter instalado:
 
-- **Node.js** (versão 18 ou superior)
+- **Node.js** (versão 22 ou superior)
 - **Yarn** (gerenciador de pacotes)
 - **Expo CLI** (`npm install -g @expo/cli`)
 - **Expo Go** (app no seu celular para testes)
