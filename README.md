@@ -275,14 +275,6 @@ pm2 start backend/server.js --name "skin-analysis-api"
 ## 📄 Licença
 
 Este projeto está sob a licença MIT. Veja o arquivo `LICENSE` para mais detalhes.
-
-## 📞 Suporte
-
-Para dúvidas ou problemas:
-- Abra uma issue no GitHub
-- Entre em contato via email
-- Consulte a documentação do Expo: https://docs.expo.dev/
-
 ---
 
 **Desenvolvido com ❤️ para ajudar pessoas a descobrirem seu tipo de pele ideal!**# whatsmyskintype
