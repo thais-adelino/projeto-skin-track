@@ -68,30 +68,24 @@ cd whatsmyskintype
 # Instalar dependências do frontend
 yarn install
 
-# Instalar dependências do backend
-npm run setup-backend
+# Instalar dependências do backend abrir mais um terminal
+cd backend
+npm install backend
+
 ```
 
-### 3. Configure o Backend
+### 3. Iniciar Front no terminal do front
+```bash
+yarn start
+
+```
+
+### 4. Iniciar backend no terminal do back
 
 ```bash
-# Obter o endereço IP do seu computador
-npm run get-ip
+npm run dev
 
-# Iniciar o servidor backend
-npm run backend
 ```
-
-O backend estará rodando em `http://localhost:3001`
-
-### 4. Configure o Frontend
-
-```bash
-# Iniciar o servidor de desenvolvimento Expo
-npm start
-```
-
-### 5. Executar no Dispositivo
 
 #### No Celular (Recomendado)
 1. Instale o **Expo Go** na App Store ou Google Play
@@ -146,30 +140,6 @@ whatsmyskintype/
 ├── app.json                     # Configuração do Expo
 ├── package.json                 # Dependências e scripts
 └── tsconfig.json                # Configuração do TypeScript
-```
-
-## 🔧 Scripts Disponíveis
-
-### Frontend
-```bash
-npm start              # Iniciar servidor de desenvolvimento
-npm run android        # Executar no Android
-npm run ios            # Executar no iOS
-npm run web            # Executar no navegador
-npm run lint           # Verificar código com ESLint
-npm test               # Executar testes
-```
-
-### Backend
-```bash
-npm run backend        # Iniciar servidor backend
-npm run setup-backend  # Instalar dependências do backend
-```
-
-### Utilitários
-```bash
-npm run get-ip         # Obter endereço IP do computador
-npm run reset-project  # Resetar projeto para estado inicial
 ```
 
 ## 🌐 API Endpoints
