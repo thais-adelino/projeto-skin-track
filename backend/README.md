@@ -6,7 +6,7 @@ Node.js backend server for the AICA Cosméticos skin analysis app.
 
 - **User Management**: Store user names and skin analysis results
 - **Statistics API**: Get skin type distribution data
-- **SQLite Database**: Lightweight, file-based database for data persistence
+- **MySQL Database**: Relational database for data persistence
 
 ## Setup
 
@@ -87,14 +87,15 @@ Health check endpoint.
 ## Database Schema
 
 ### users table
-- `id`: INTEGER PRIMARY KEY AUTOINCREMENT
-- `name`: TEXT NOT NULL
-- `skin_type`: TEXT NOT NULL
+- `id`: INT AUTO_INCREMENT PRIMARY KEY
+- `name`: VARCHAR(255) NOT NULL
+- `skin_type`: VARCHAR(50) NOT NULL
 - `characteristics`: TEXT NOT NULL (JSON string)
-- `created_at`: DATETIME DEFAULT CURRENT_TIMESTAMP
+- `created_at`: TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 
 ## Development
 
 - Use `npm run dev` for development with auto-restart
 - Use `npm start` for production
-- Database file is created automatically at `backend/database.sqlite`
+- Use `npm run setup` to configure MySQL database
+- Use `npm run migrate` to create database tables

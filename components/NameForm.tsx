@@ -18,6 +18,7 @@ interface Props {
 
 const NameForm: React.FC<Props> = ({ onNameSubmit }) => {
   const [name, setName] = useState('');
+  const [isFocused, setIsFocused] = useState(false);
 
   const handleSubmit = () => {
     const trimmedName = name.trim();
@@ -49,7 +50,7 @@ const NameForm: React.FC<Props> = ({ onNameSubmit }) => {
           <Card variant="glass" style={styles.formCard}>
             <Text style={styles.label}>Como devemos te chamar?</Text>
             <TextInput
-              style={styles.input}
+              style={[styles.input, isFocused && styles.inputFocused]}
               value={name}
               onChangeText={setName}
               placeholder="Digite seu nome..."
@@ -59,6 +60,10 @@ const NameForm: React.FC<Props> = ({ onNameSubmit }) => {
               returnKeyType="done"
               onSubmitEditing={handleSubmit}
               maxLength={50}
+              onFocus={() => setIsFocused(true)}
+              onBlur={() => setIsFocused(false)}
+              underlineColorAndroid="transparent"
+              selectionColor="rgba(255, 255, 255, 0.8)"
             />
             
             <TouchableOpacity
@@ -133,6 +138,21 @@ const styles = StyleSheet.create({
     marginBottom: 24,
     textAlign: 'center',
     fontWeight: '500',
+    outlineStyle: 'none',
+  },
+  inputFocused: {
+    borderColor: 'rgba(255, 255, 255, 0.6)',
+    borderWidth: 2,
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    shadowColor: '#ffffff',
+    shadowOffset: {
+      width: 0,
+      height: 0,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 4,
+    outlineStyle: 'none',
   },
   button: {
     backgroundColor: 'transparent',

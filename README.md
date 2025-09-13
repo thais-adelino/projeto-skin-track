@@ -1,6 +1,6 @@
 # Qual é minha pele? - Análise de Pele Inteligente
 
-Uma aplicação mobile completa para análise de tipo de pele com interface moderna, backend Node.js e banco de dados SQLite.
+Uma aplicação mobile completa para análise de tipo de pele com interface moderna, backend Node.js e banco de dados MySQL.
 
 ## 📱 Sobre o Projeto
 
@@ -11,7 +11,7 @@ Uma aplicação mobile completa para análise de tipo de pele com interface mode
 - 🎨 **Interface Moderna**: Design inspirado no shadcn com gradientes pastel
 - 🤖 **Análise Inteligente**: Questionário interativo para determinar tipo de pele
 - 📊 **Estatísticas da Comunidade**: Visualização de dados agregados dos usuários
-- 🌐 **Backend Completo**: API REST com Node.js e SQLite
+- 🌐 **Backend Completo**: API REST com Node.js e MySQL
 - 📱 **Multiplataforma**: Funciona em iOS, Android e Web
 - 🇧🇷 **Totalmente em Português**: Interface completamente traduzida
 
@@ -33,7 +33,8 @@ Uma aplicação mobile completa para análise de tipo de pele com interface mode
 ### Backend (Servidor)
 - **Node.js** - Runtime JavaScript
 - **Express.js 4.19.2** - Framework web minimalista
-- **SQLite3 5.1.7** - Banco de dados leve
+- **MySQL 8.0+** - Banco de dados relacional
+- **MySQL2 3.6.5** - Cliente MySQL para Node.js
 - **CORS 2.8.5** - Compartilhamento de recursos entre origens
 - **Nodemon 3.1.4** - Reinicialização automática do servidor
 
@@ -50,7 +51,8 @@ Uma aplicação mobile completa para análise de tipo de pele com interface mode
 
 Antes de começar, certifique-se de ter instalado:
 
-- **Node.js** (versão 22 ou superior)
+- **Node.js** (versão 18 ou superior)
+- **MySQL Server** (versão 8.0 ou superior)
 - **Yarn** (gerenciador de pacotes)
 - **Expo CLI** (`npm install -g @expo/cli`)
 - **Expo Go** (app no seu celular para testes)
@@ -68,10 +70,13 @@ cd whatsmyskintype
 # Instalar dependências do frontend
 yarn install
 
-# Instalar dependências do backend abrir mais um terminal
+# Instalar dependências do backend (abrir mais um terminal)
 cd backend
-npm install backend
+npm install
+brew install mysql
 
+# Configurar banco de dados MySQL
+npm run setup
 ```
 
 ### 3. Iniciar Front no terminal do front
@@ -130,7 +135,10 @@ whatsmyskintype/
 ├── backend/                     # Servidor Node.js
 │   ├── server.js                # Servidor principal
 │   ├── package.json             # Dependências do backend
-│   └── database.sqlite          # Banco de dados (gerado automaticamente)
+│   ├── config.js                # Configuração do banco de dados
+│   ├── migrate.js               # Script de migração do banco
+│   ├── setup-mysql.js           # Script de configuração MySQL
+│   └── .env                     # Variáveis de ambiente (criado automaticamente)
 ├── assets/                      # Recursos estáticos
 │   ├── images/                  # Imagens
 │   └── fonts/                   # Fontes
@@ -275,6 +283,14 @@ pm2 start backend/server.js --name "skin-analysis-api"
 ## 📄 Licença
 
 Este projeto está sob a licença MIT. Veja o arquivo `LICENSE` para mais detalhes.
+
+## 📞 Suporte
+
+Para dúvidas ou problemas:
+- Abra uma issue no GitHub
+- Entre em contato via email
+- Consulte a documentação do Expo: https://docs.expo.dev/
+
 ---
 
 **Desenvolvido com ❤️ para ajudar pessoas a descobrirem seu tipo de pele ideal!**# whatsmyskintype

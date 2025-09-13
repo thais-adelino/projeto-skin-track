@@ -10,7 +10,7 @@ This guide will help you set up your updated skin analysis app with Node.js back
 ✅ **Portuguese Language** - Complete translation to Portuguese Brasil  
 ✅ **No Emojis** - Clean, emoji-free interface  
 ✅ **Shadcn-inspired Components** - Glass morphism cards and modern styling  
-✅ **Removed Supabase dependency** - Now using Node.js with SQLite  
+✅ **Removed Supabase dependency** - Now using Node.js with MySQL  
 ✅ **Name input form** - Users enter their name before starting  
 ✅ **Personalized greetings** - Chat starts with "Olá, [name]!"  
 ✅ **Statistics page** - Shows skin type distribution across all users  
@@ -67,7 +67,7 @@ npm start
 
 ## Backend Features
 
-- **SQLite Database**: Lightweight, file-based storage
+- **MySQL Database**: Relational database for data persistence
 - **REST API**: Simple endpoints for saving/retrieving data
 - **Real-time Statistics**: Updated as users complete analyses
 - **Error Handling**: Graceful fallbacks if backend is unavailable
@@ -128,10 +128,10 @@ If you're getting "Network request failed" errors:
 
 ### Backend
 - Node.js with Express
-- SQLite database
+- MySQL database
 - RESTful API endpoints
 - CORS enabled for development
-- Automatic table creation
+- Database migration scripts
 
 ## File Structure
 
@@ -161,9 +161,9 @@ whatsmyskintype/
 - Verify the API endpoints are accessible
 
 ### Database Issues
-- Database file is created automatically at `backend/database.sqlite`
-- Delete the database file to reset all data
-- Check server logs for database errors
+- Database is created automatically when running `npm run migrate`
+- Use `npm run setup` to configure MySQL connection
+- Check server logs for database connection errors
 
 ### Mobile App Issues
 - Clear Expo cache: `expo start --clear`

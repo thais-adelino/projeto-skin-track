@@ -3,7 +3,7 @@
 
 // Get your computer's IP address by running: ipconfig (Windows) or ifconfig (Mac/Linux)
 // Replace the IP address below with your actual computer's IP address
-const DEV_API_BASE_URL = 'http://192.168.0.169:3001'; // Your computer's IP address
+const DEV_API_BASE_URL = 'http://192.168.0.190:3001'; // Your computer's IP address
 const PROD_API_BASE_URL = 'http://localhost:3001';
 
 export const API_BASE_URL = __DEV__ ? DEV_API_BASE_URL : PROD_API_BASE_URL;
