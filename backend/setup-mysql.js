@@ -39,8 +39,16 @@ async function setupMySQL() {
     await connection.execute(`CREATE DATABASE IF NOT EXISTS \`${database}\``);
     console.log(`✅ Database '${database}' created or already exists`);
     
-    // Use the database
-    await connection.execute(`USE \`${database}\``);
+    await connection.end();
+    
+    // Create new connection to the specific database
+    const dbConnection = await mysql.createConnection({
+      host,
+      port: parseInt(port),
+      user,
+      password,
+      database
+    });
     
     // Create users table
     const createUsersTable = `
@@ -53,10 +61,10 @@ async function setupMySQL() {
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
     `;
     
-    await connection.execute(createUsersTable);
+    await dbConnection.execute(createUsersTable);
     console.log('✅ Users table created successfully');
     
-    await connection.end();
+    await dbConnection.end();
     
     // Create .env file
     const envContent = `# MySQL Database Configuration

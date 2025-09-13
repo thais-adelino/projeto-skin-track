@@ -1,7 +1,7 @@
 {
-  "name": "aica-cosmeticos-backend",
+  "name": "skin-track-backend",
   "version": "1.0.0",
-  "description": "Backend server for AICA Cosmeticos app",
+  "description": "Backend server for Skin Track app",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
