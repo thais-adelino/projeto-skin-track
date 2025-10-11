@@ -210,7 +210,7 @@ const useChatLogic = (userName?: string) => {
     setMessages(newMessages);
   }, [currentQuestionIndex, messages, responses, processAnswer]);
 
-  const saveUserData = useCallback(async (name: string, skinType: string, characteristics: any) => {
+  const saveUserData = useCallback(async (name: string, age: number, skinType: string, characteristics: any) => {
     try {
       const response = await fetch(`${API_BASE_URL}/api/users`, {
         method: 'POST',
@@ -219,6 +219,7 @@ const useChatLogic = (userName?: string) => {
         },
         body: JSON.stringify({
           name,
+          age,
           skinType,
           characteristics
         }),

@@ -7,7 +7,10 @@ import {
   ActivityIndicator,
   RefreshControl,
   TouchableOpacity,
+  Platform,
+  Dimensions,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import GradientBackground from './ui/GradientBackground';
 import Card from './ui/Card';
 import { API_BASE_URL } from '../constants/Config';
@@ -18,9 +21,17 @@ interface SkinTypeStatistic {
   percentage: number;
 }
 
+interface AgeGroupStatistic {
+  age_group: string;
+  count: number;
+  percentage: number;
+}
+
 interface StatisticsData {
-  statistics: SkinTypeStatistic[];
+  skinTypeStatistics: SkinTypeStatistic[];
+  ageGroupStatistics: AgeGroupStatistic[];
   total: number;
+  averageAge: number;
 }
 
 interface Props {
@@ -43,11 +54,31 @@ const skinTypeColors = {
   sensitive: "rgba(255, 255, 255, 0.8)", // Darker grey
 };
 
+const ageGroupColors = {
+  "13-19": "rgba(255, 255, 255, 0.9)",
+  "20-29": "rgba(255, 255, 255, 0.8)",
+  "30-39": "rgba(255, 255, 255, 0.7)",
+  "40-49": "rgba(255, 255, 255, 0.6)",
+  "50-59": "rgba(255, 255, 255, 0.5)",
+  "60+": "rgba(255, 255, 255, 0.4)",
+};
+
 const StatisticsPage: React.FC<Props> = ({ onGoBack }) => {
   const [data, setData] = useState<StatisticsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
+  const insets = useSafeAreaInsets();
+  const screenHeight = Dimensions.get('window').height;
+
+  // Compute styles based on platform
+  const containerStyle = Platform.OS === 'web' 
+    ? [styles.container, { height: screenHeight, maxHeight: screenHeight }]
+    : styles.container;
+  
+  const contentStyle = Platform.OS === 'web'
+    ? [styles.content, styles.contentWeb, { paddingBottom: insets.bottom }]
+    : [styles.content, { paddingBottom: insets.bottom }];
 
   const fetchStatistics = async () => {
     try {
@@ -110,7 +141,8 @@ const StatisticsPage: React.FC<Props> = ({ onGoBack }) => {
   return (
     <GradientBackground>
       <ScrollView
-        style={styles.container}
+        style={containerStyle}
+        contentContainerStyle={Platform.OS === 'web' ? styles.scrollContentWeb : styles.scrollContent}
         refreshControl={
           <RefreshControl 
             refreshing={refreshing} 
@@ -120,7 +152,7 @@ const StatisticsPage: React.FC<Props> = ({ onGoBack }) => {
         }
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.content}>
+        <View style={contentStyle}>
           <View style={styles.header}>
             <TouchableOpacity style={styles.backButtonHeader} onPress={onGoBack}>
               <Text style={styles.backButtonHeaderText}>Voltar</Text>
@@ -130,44 +162,97 @@ const StatisticsPage: React.FC<Props> = ({ onGoBack }) => {
             <Text style={styles.totalUsers}>
               {data?.total || 0} usuárias analisadas
             </Text>
+            {data?.averageAge && (
+              <Text style={styles.averageAge}>
+                Idade média: {data.averageAge} anos
+              </Text>
+            )}
           </View>
 
-          {data && data.statistics.length > 0 ? (
-            <View style={styles.statisticsContainer}>
-              {data.statistics.map((stat, index) => {
-                const skinTypeKey = stat.skin_type as keyof typeof skinTypeLabels;
-                const label = skinTypeLabels[skinTypeKey] || stat.skin_type;
-                const color = skinTypeColors[skinTypeKey] || '#ffffff';
-                
-                return (
-                  <Card key={stat.skin_type} variant="glass" style={styles.statCard}>
-                    <View style={styles.statHeader}>
-                      <View style={styles.statLabelContainer}>
-                        <View style={[styles.colorIndicator, { backgroundColor: color }]} />
-                        <Text style={styles.statLabel}>Pele {label}</Text>
+          {data && data.skinTypeStatistics && data.skinTypeStatistics.length > 0 ? (
+            <>
+              <Card variant="default" style={styles.sectionCard}>
+                <Text style={styles.sectionTitle}>Tipos de Pele</Text>
+              </Card>
+              
+              <View style={styles.statisticsContainer}>
+                {data.skinTypeStatistics.map((stat, index) => {
+                  const skinTypeKey = stat.skin_type as keyof typeof skinTypeLabels;
+                  const label = skinTypeLabels[skinTypeKey] || stat.skin_type;
+                  const color = skinTypeColors[skinTypeKey] || '#ffffff';
+                  
+                  return (
+                    <Card key={stat.skin_type} variant="glass" style={styles.statCard}>
+                      <View style={styles.statHeader}>
+                        <View style={styles.statLabelContainer}>
+                          <View style={[styles.colorIndicator, { backgroundColor: color }]} />
+                          <Text style={styles.statLabel}>Pele {label}</Text>
+                        </View>
+                        <Text style={styles.statPercentage}>{stat.percentage}%</Text>
                       </View>
-                      <Text style={styles.statPercentage}>{stat.percentage}%</Text>
-                    </View>
-                    
-                    <View style={styles.barContainer}>
-                      <View 
-                        style={[
-                          styles.bar, 
-                          { 
-                            width: `${stat.percentage}%`,
-                            backgroundColor: color,
-                          }
-                        ]} 
-                      />
-                    </View>
-                    
-                    <Text style={styles.statCount}>
-                      {stat.count} {stat.count === 1 ? 'usuária' : 'usuárias'}
-                    </Text>
+                      
+                      <View style={styles.barContainer}>
+                        <View 
+                          style={[
+                            styles.bar, 
+                            { 
+                              width: `${stat.percentage}%`,
+                              backgroundColor: color,
+                            }
+                          ]} 
+                        />
+                      </View>
+                      
+                      <Text style={styles.statCount}>
+                        {stat.count} {stat.count === 1 ? 'usuária' : 'usuárias'}
+                      </Text>
+                    </Card>
+                  );
+                })}
+              </View>
+
+              {data.ageGroupStatistics && data.ageGroupStatistics.length > 0 && (
+                <>
+                  <Card variant="default" style={styles.sectionCard}>
+                    <Text style={styles.sectionTitle}>Faixas Etárias</Text>
                   </Card>
-                );
-              })}
-            </View>
+                  
+                  <View style={styles.statisticsContainer}>
+                    {data.ageGroupStatistics.map((stat, index) => {
+                      const color = ageGroupColors[stat.age_group as keyof typeof ageGroupColors] || 'rgba(255, 255, 255, 0.6)';
+                      
+                      return (
+                        <Card key={stat.age_group} variant="glass" style={styles.statCard}>
+                          <View style={styles.statHeader}>
+                            <View style={styles.statLabelContainer}>
+                              <View style={[styles.colorIndicator, { backgroundColor: color }]} />
+                              <Text style={styles.statLabel}>{stat.age_group} anos</Text>
+                            </View>
+                            <Text style={styles.statPercentage}>{stat.percentage}%</Text>
+                          </View>
+                          
+                          <View style={styles.barContainer}>
+                            <View 
+                              style={[
+                                styles.bar, 
+                                { 
+                                  width: `${stat.percentage}%`,
+                                  backgroundColor: color,
+                                }
+                              ]} 
+                            />
+                          </View>
+                          
+                          <Text style={styles.statCount}>
+                            {stat.count} {stat.count === 1 ? 'usuária' : 'usuárias'}
+                          </Text>
+                        </Card>
+                      );
+                    })}
+                  </View>
+                </>
+              )}
+            </>
           ) : (
             <Card variant="glass" style={styles.emptyCard}>
               <Text style={styles.emptyText}>
@@ -200,9 +285,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 24,
   },
+  scrollContent: {
+    flexGrow: 1,
+  },
+  scrollContentWeb: {
+    flexGrow: 1,
+  },
   content: {
     padding: 24,
     paddingTop: 60,
+  },
+  contentWeb: {
+    minHeight: 'auto',
+    paddingBottom: 40,
   },
   header: {
     marginBottom: 32,
@@ -237,6 +332,23 @@ const styles = StyleSheet.create({
     color: 'rgba(255, 255, 255, 0.8)',
     textAlign: 'center',
     fontWeight: '500',
+  },
+  averageAge: {
+    fontSize: 14,
+    color: 'rgba(255, 255, 255, 0.7)',
+    textAlign: 'center',
+    fontWeight: '400',
+    marginTop: 4,
+  },
+  sectionCard: {
+    marginBottom: 16,
+    marginHorizontal: 16,
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#ffffff',
+    textAlign: 'center',
   },
   statisticsContainer: {
     gap: 16,

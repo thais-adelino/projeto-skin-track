@@ -1,6 +1,7 @@
 // ProductRecommendations.tsx
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, Platform, Dimensions } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import GradientBackground from './ui/GradientBackground';
 import Card from './ui/Card';
 
@@ -14,9 +15,10 @@ interface Props {
     sensitive: number;
   };
   userName: string;
+  userAge: number;
   onShowStatistics: () => void;
   onStartOver: () => void;
-  saveUserData: (name: string, skinType: string, characteristics: any) => Promise<any>;
+  saveUserData: (name: string, age: number, skinType: string, characteristics: any) => Promise<any>;
 }
 
 const recommendations = {
@@ -84,20 +86,32 @@ const ProductRecommendations: React.FC<Props> = ({
   skinType, 
   characteristics, 
   userName, 
+  userAge,
   onShowStatistics, 
   onStartOver,
   saveUserData 
 }) => {
   const [saving, setSaving] = useState(false);
+  const insets = useSafeAreaInsets();
   const recommendation = recommendations[skinType as keyof typeof recommendations];
   const maxValue = Math.max(...Object.values(characteristics));
+  const screenHeight = Dimensions.get('window').height;
+
+  // Compute styles based on platform
+  const containerStyle = Platform.OS === 'web' 
+    ? [styles.container, { height: screenHeight, maxHeight: screenHeight }]
+    : styles.container;
+  
+  const contentStyle = Platform.OS === 'web'
+    ? [styles.content, styles.contentWeb, { paddingBottom: insets.bottom }]
+    : [styles.content, { paddingBottom: insets.bottom }];
 
   // Save user data when component mounts
   useEffect(() => {
     const saveData = async () => {
       setSaving(true);
       try {
-        await saveUserData(userName, skinType, characteristics);
+        await saveUserData(userName, userAge, skinType, characteristics);
       } catch (error) {
         console.error('Failed to save user data:', error);
       } finally {
@@ -106,15 +120,20 @@ const ProductRecommendations: React.FC<Props> = ({
     };
 
     saveData();
-  }, [userName, skinType, characteristics, saveUserData]);
+  }, [userName, userAge, skinType, characteristics, saveUserData]);
 
   return (
     <GradientBackground>
-      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-        <View style={styles.content}>
+      <ScrollView 
+        style={containerStyle} 
+        contentContainerStyle={Platform.OS === 'web' ? styles.scrollContentWeb : styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={contentStyle}>
           <View style={styles.header}>
             <Text style={styles.title}>Qual é minha pele?</Text>
             <Text style={styles.welcomeText}>Olá, {userName}!</Text>
+            <Text style={styles.ageText}>{userAge} anos</Text>
           </View>
           
           <Card variant="glass" style={styles.resultCard}>
@@ -179,11 +198,6 @@ const ProductRecommendations: React.FC<Props> = ({
             </TouchableOpacity>
           </View>
 
-          {saving && (
-            <Card variant="default" style={styles.savingCard}>
-              <Text style={styles.savingText}>Salvando seus dados...</Text>
-            </Card>
-          )}
         </View>
       </ScrollView>
     </GradientBackground>
@@ -194,9 +208,19 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  scrollContent: {
+    flexGrow: 1,
+  },
+  scrollContentWeb: {
+    flexGrow: 1,
+  },
   content: {
     padding: 24,
     paddingTop: 60,
+  },
+  contentWeb: {
+    minHeight: 'auto',
+    paddingBottom: 40,
   },
   header: {
     alignItems: 'center',
@@ -215,6 +239,13 @@ const styles = StyleSheet.create({
     color: 'rgba(255, 255, 255, 0.9)',
     textAlign: 'center',
     fontWeight: '600',
+  },
+  ageText: {
+    fontSize: 16,
+    color: 'rgba(255, 255, 255, 0.7)',
+    textAlign: 'center',
+    fontWeight: '500',
+    marginTop: 4,
   },
   resultCard: {
     marginBottom: 20,
@@ -340,14 +371,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '700',
     letterSpacing: 0.5,
-  },
-  savingCard: {
-    alignItems: 'center',
-  },
-  savingText: {
-    color: 'rgba(255, 255, 255, 0.8)',
-    fontSize: 16,
-    fontWeight: '500',
   },
 });
 

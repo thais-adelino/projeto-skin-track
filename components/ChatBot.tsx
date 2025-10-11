@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Platform } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import useChatLogic from '../hooks/useChatLogic';
 import ProductRecommendations from './ProductRecommendations';
 import GradientBackground from './ui/GradientBackground';
@@ -13,12 +14,14 @@ interface Message {
 
 interface Props {
   userName: string;
+  userAge: number;
   onShowStatistics: () => void;
   onStartOver: () => void;
 }
 
-const ChatBot: React.FC<Props> = ({ userName, onShowStatistics, onStartOver }) => {
+const ChatBot: React.FC<Props> = ({ userName, userAge, onShowStatistics, onStartOver }) => {
   const scrollViewRef = useRef<ScrollView>(null);
+  const insets = useSafeAreaInsets();
   const {
     currentQuestion,
     handleResponse,
@@ -27,6 +30,23 @@ const ChatBot: React.FC<Props> = ({ userName, onShowStatistics, onStartOver }) =
     saveUserData,
     messages = [],
   } = useChatLogic(userName);
+
+  // Compute styles based on platform
+  const containerStyle = Platform.OS === 'web' 
+    ? [styles.container, { paddingBottom: insets.bottom }, styles.containerWeb]
+    : [styles.container, { paddingBottom: insets.bottom }];
+  
+  const chatContainerStyle = Platform.OS === 'web'
+    ? [styles.chatContainer, styles.chatContainerWeb]
+    : styles.chatContainer;
+    
+  const chatContentStyle = Platform.OS === 'web'
+    ? [styles.chatContent, styles.chatContentWeb]
+    : styles.chatContent;
+    
+  const bottomSectionStyle = Platform.OS === 'web'
+    ? { ...styles.bottomSection, ...styles.bottomSectionWeb }
+    : styles.bottomSection;
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
@@ -44,6 +64,7 @@ const ChatBot: React.FC<Props> = ({ userName, onShowStatistics, onStartOver }) =
         skinType={analysis.skinType}
         characteristics={analysis.characteristics}
         userName={userName}
+        userAge={userAge}
         onShowStatistics={onShowStatistics}
         onStartOver={onStartOver}
         saveUserData={saveUserData}
@@ -53,19 +74,20 @@ const ChatBot: React.FC<Props> = ({ userName, onShowStatistics, onStartOver }) =
 
   return (
     <GradientBackground>
-      <View style={styles.container}>
+      <View style={containerStyle}>
         <View style={styles.header}>
-                      <Text style={styles.headerTitle}>Qual é minha pele?</Text>
-            <Text style={styles.headerSubtitle}>Consulta de Análise da Pele</Text>
+          <Text style={styles.headerTitle}>Qual é minha pele?</Text>
+          <Text style={styles.headerSubtitle}>Consulta de Análise da Pele</Text>
         </View>
 
-                            <View style={styles.chatWrapper}>
-                      <ScrollView
-                        ref={scrollViewRef}
-                        style={styles.chatContainer}
-                        contentContainerStyle={styles.chatContent}
-                        showsVerticalScrollIndicator={false}
-                      >
+        <View style={styles.chatWrapper}>
+          <ScrollView
+            ref={scrollViewRef}
+            style={chatContainerStyle}
+            contentContainerStyle={chatContentStyle}
+            showsVerticalScrollIndicator={false}
+            nestedScrollEnabled={false}
+          >
             {messages.map((message: Message) => (
               <View
                 key={message.id}
@@ -85,7 +107,7 @@ const ChatBot: React.FC<Props> = ({ userName, onShowStatistics, onStartOver }) =
           </ScrollView>
         </View>
         
-        <Card variant="glass" style={styles.bottomSection}>
+        <Card variant="glass" style={bottomSectionStyle}>
           <Text style={styles.questionText}>{currentQuestion.question}</Text>
           
           <View style={styles.optionsContainer}>
@@ -110,6 +132,10 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 60,
   },
+  containerWeb: {
+    height: '100%',
+    maxHeight: '100%',
+  },
   header: {
     alignItems: 'center',
     paddingHorizontal: 24,
@@ -130,17 +156,31 @@ const styles = StyleSheet.create({
   chatWrapper: {
     flex: 1,
     marginHorizontal: 16,
+    minHeight: 0, // Ensures proper flex behavior
   },
   chatContainer: {
     flex: 1,
   },
+  chatContainerWeb: {
+    maxHeight: 400, // Limit height on web to prevent overflow
+  },
   chatContent: {
     padding: 16,
     paddingBottom: 24,
+    flexGrow: 1,
+  },
+  chatContentWeb: {
+    minHeight: 'auto', // Allow content to size naturally on web
   },
   bottomSection: {
     margin: 16,
     marginTop: 8,
+    marginBottom: 16,
+  },
+  bottomSectionWeb: {
+    backgroundColor: 'rgba(255, 255, 255, 0.15)',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.2)',
   },
   questionText: {
     color: '#ffffff',

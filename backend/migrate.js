@@ -25,6 +25,7 @@ async function createDatabase() {
       CREATE TABLE IF NOT EXISTS users (
         id INT AUTO_INCREMENT PRIMARY KEY,
         name VARCHAR(255) NOT NULL,
+        age INT NOT NULL DEFAULT 25,
         skin_type VARCHAR(50) NOT NULL,
         characteristics TEXT NOT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -33,6 +34,21 @@ async function createDatabase() {
 
     await connection.execute(createUsersTable);
     console.log('Users table created successfully');
+
+    // Add age column if it doesn't exist (for existing tables)
+    try {
+      await connection.execute(`
+        ALTER TABLE users 
+        ADD COLUMN age INT NOT NULL DEFAULT 25 
+        AFTER name
+      `);
+      console.log('Age column added to users table');
+    } catch (error) {
+      // Column might already exist, which is fine
+      if (!error.message.includes('Duplicate column name')) {
+        console.log('Age column already exists or other error:', error.message);
+      }
+    }
 
     await connection.end();
     console.log('Migration completed successfully!');

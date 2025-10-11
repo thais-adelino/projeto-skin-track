@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { SafeAreaView } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import LoadingScreen from '../components/LoadingScreen';
 import NameForm from '../components/NameForm';
 import ChatBot from '../components/ChatBot';
@@ -10,6 +10,7 @@ type AppState = 'loading' | 'nameForm' | 'chat' | 'statistics';
 const Layout = () => {
   const [appState, setAppState] = useState<AppState>('loading');
   const [userName, setUserName] = useState<string>('');
+  const [userAge, setUserAge] = useState<number>(25);
 
   useEffect(() => {
     setTimeout(() => {
@@ -17,8 +18,9 @@ const Layout = () => {
     }, 2000);
   }, []);
 
-  const handleNameSubmit = (name: string) => {
+  const handleNameSubmit = (name: string, age: number) => {
     setUserName(name);
+    setUserAge(age);
     setAppState('chat');
   };
 
@@ -32,6 +34,7 @@ const Layout = () => {
 
   const handleStartOver = () => {
     setUserName('');
+    setUserAge(25);
     setAppState('nameForm');
   };
 
@@ -45,6 +48,7 @@ const Layout = () => {
         return (
           <ChatBot 
             userName={userName}
+            userAge={userAge}
             onShowStatistics={handleShowStatistics}
             onStartOver={handleStartOver}
           />
@@ -57,9 +61,9 @@ const Layout = () => {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaProvider>
       {renderCurrentScreen()}
-    </SafeAreaView>
+    </SafeAreaProvider>
   );
 };
 
