@@ -4,7 +4,7 @@ Uma aplicação mobile completa para análise de tipo de pele com interface mode
 
 ## 📱 Sobre o Projeto
 
-**Qual é minha pele?** é um aplicativo mobile que oferece uma análise personalizada do tipo de pele através de um questionário interativo. O app utiliza inteligência artificial para determinar características da pele e fornecer recomendações de produtos personalizadas.
+**Qual é minha pele?** é um aplicativo mobile que oferece uma análise personalizada do tipo de pele através de um questionário interativo. O app determina características da pele e fornece recomendações de produtos personalizadas.
 
 ### ✨ Características Principais
 
